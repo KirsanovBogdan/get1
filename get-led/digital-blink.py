@@ -4,7 +4,7 @@ import time
 GPIO.setmode(GPIO.BCM)
 led = 26
 GPIO.setup(led, GPIO.OUT)
-state = 0
+state = 1
 period = 1.0
 while True:
     GPIO.output(led,state)
@@ -13,4 +13,4 @@ while True:
         state = 1
     elif (state == 1):
         state = 0
-    time.sleep(period)
+    time.sleep(period/2)
