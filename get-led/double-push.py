@@ -17,13 +17,22 @@ num = 0
 sleep_time = 0.2
 
 while True:
-    if GPIO.input(up):
-        if (num >= 1 & num<=512):
+    if (GPIO.input(up) & GPIO.input(down)):
+        num = 255
+        print(num, dec2bin(num))
+        time.sleep(sleep_time)
+    elif GPIO.input(up):
+        if (num == 255):
+            num = 0
+            time.sleep(sleep_time)
+        if (num >= 0 & num<255):
             num+=1
             print(num, dec2bin(num))
             time.sleep(sleep_time)
-    if GPIO.input(down):
-        if (num >= 1 & num<=16):
+    elif GPIO.input(down):
+        if (num == 0):
+             time.sleep(sleep_time)
+        elif (num >= 1 & num<=255):
             num-=1
             print(num, dec2bin(num))
             time.sleep(sleep_time)
