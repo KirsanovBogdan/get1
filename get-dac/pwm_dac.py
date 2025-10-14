@@ -1,29 +1,42 @@
-import RPi.GPIO as gpio
+import RPi.GPIO as GPIO
+GPIO.setmode(GPIO.BCM)
 
-class PWM_DAC:
+class pwm_dac:
     def __init__(self, gpio_pin, pwm_frequency, dynamic_range, verbose = False):
-        self.pin = gpio_pin
+        self.gpio_pin = gpio_pin
+        self.pwm_frequency = pwm_frequency
         self.dynamic_range = dynamic_range
-        gpio.setmode(gpio.BCM)
-        gpio.setup(self.pin, gpio.OUT)
-        self.pwm = gpio.PWM(self.pin, pwm_frequency)
+        self.verbose = verbose
+
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(self.gpio_pin, GPIO.OUT, initial = 0)
+
+        self.pwm = GPIO.PWM(self.gpio_pin, self.pwm_frequency)
         self.pwm.start(0)
-
     def deinit(self):
-        gpio.output(self.pin, 0)
-        gpio.cleanup()
-
-    def setvoltage(self, voltage):
-        self.pwm.ChangeDutyCycle(voltage/self.dynamic_range * 100)
+        GPIO.output(self.gpio_pin, 0)
+        GPIO.cleanup()
+    def set_voltage(self, voltage, gpio_pin, dynamic_range):
+        if not (0.0 <= voltage <= dynamic_range):
+            print(f"Напряжение выходит за динамический диапазон ЦАП (0.00 - {dynamic_range:.2f} B")
+            print ("Устанавливаем 0.0 В")
+            return 0
+        duty_cycle = (voltage / self.dynamic_range) * 100
+        self.pwm.ChangeDutyCycle(duty_cycle)
 
 if __name__ == "__main__":
-    dac = PWM_DAC(12, 500, 3.18, True)
+    dac = pwm_dac(12, 500, 3.167, True)
     try:
         while True:
             try:
-                voltage = float(input("input voltage i Volts: "))
-                dac.setvoltage(voltage)
+                voltage = float(input("Введите напряжение в Вольтах: "))
+                dac.set_voltage(voltage, 12, 3.167)
+
             except ValueError:
-                print("incorrect input, try again")
+                print("Вы ввели не число. Попробуйте ещё раз\n")
+    
+
     finally:
         dac.deinit()
+
+
