@@ -1,32 +1,29 @@
-import RPi.GPIO as GPIO
-
+import RPi.GPIO as gpio
 
 class PWM_DAC:
     def __init__(self, gpio_pin, pwm_frequency, dynamic_range, verbose = False):
-        self.gpio_pin = gpio_pin
+        self.pin = gpio_pin
         self.dynamic_range = dynamic_range
-        self.verbose = verbose
-
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.gpio_pin, GPIO.OUT, initial = 0)
+        gpio.setmode(gpio.BCM)
+        gpio.setup(self.pin, gpio.OUT)
+        self.pwm = gpio.PWM(self.pin, pwm_frequency)
+        self.pwm.start(0)
 
     def deinit(self):
-        GPIO.output(self.gpio_pin, 0)
-        GPIO.cleanup()
-    
-    def set_voltage(self, voltage, gpio_pin):
-        GPIO.output(self.gpio_pin, [int(element) for element in bin(voltage)[2:].zfill(8)])
+        gpio.output(self.pin, 0)
+        gpio.cleanup()
 
+    def setvoltage(self, voltage):
+        self.pwm.ChangeDutyCycle(voltage/self.dynamic_range * 100)
 
 if __name__ == "__main__":
+    dac = PWM_DAC(12, 500, 3.18, True)
     try:
-        dac = PWM_DAC(12, 500, 3.290, True)
         while True:
             try:
-                voltage = float(input("Введите напряжение в Вольтах:"))
-                dac.set_voltage(voltage, 12)
-
+                voltage = float(input("input voltage i Volts: "))
+                dac.setvoltage(voltage)
             except ValueError:
-                print ("Вы ввели не число. Попробуйте ещё раз \n")
+                print("incorrect input, try again")
     finally:
         dac.deinit()
