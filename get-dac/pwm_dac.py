@@ -25,12 +25,12 @@ class pwm_dac:
         self.pwm.ChangeDutyCycle(duty_cycle)
 
 if __name__ == "__main__":
-    dac = pwm_dac(12, 500, 3.167, True)
+    dac = pwm_dac(12, 500, 3.285, True)
     try:
         while True:
             try:
                 voltage = float(input("Введите напряжение в Вольтах: "))
-                dac.set_voltage(voltage, 12, 3.167)
+                dac.set_voltage(voltage, 12, 3.285)
 
             except ValueError:
                 print("Вы ввели не число. Попробуйте ещё раз\n")

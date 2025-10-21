@@ -7,7 +7,7 @@ signal_frequency = 10
 sampling_frequency = 1000
 
 if __name__ == "__main__":
-    dac = pwm.pwm_dac(12, 5000, 3.18, True)
+    dac = pwm.pwm_dac(12, 500, 3.18, True)
     try:
         
 
