@@ -6,7 +6,27 @@ import time
 def plot_voltage_vs_time(time, voltage, max_voltage):
     plt.figure(figsize=(10,6))
     plt.plot(time, voltage)
+    plt.title("Зависимость напряжения от времени")
+    plt.xlabel('Время, с')
+    plt.ylabel('Напряжеине, В')
     plt.show()
+
+def plot_sampling_period_hist(time):
+    sampling_periods = []
+    for i in range (1, len(time)):
+        period = time[i] - time[i-1]
+        sampling_periods.append(period)
+    plt.figure(figsize=(10,6))
+    plt.hist(sampling_periods)
+    plt.title("Распределение периодов дискретизации измерений по времени за одно измерение")
+    plt.xlabel('Период измерений, с')
+    plt.ylabel('Количество измерений, шт')
+    plt.xlim(0, 2.0)
+    plt.grid(True, linestyle = '--', alpha = 0.7, axis = 'y')
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
     
 def dec2bin(value):
     return [int(element) for element in bin(value)[2:].zfill(8)]
@@ -65,6 +85,7 @@ if __name__ == "__main__":
             voltage_values.append(voltage)
 
         plot_voltage_vs_time(time_values, voltage_values, adc.dynamic_range)
+        plot_sampling_period_hist(time_values)
     except KeyboardInterrupt:
         print("Stopped by the keyboard\n")
     finally:
